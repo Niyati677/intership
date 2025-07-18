@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Search</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: cadetblue;
+      text-align: center;
+      padding: 50px;
+    }
+
+    input,
+    button {
+      padding: 1px;
+      margin: 1px;
+      font-size: 16px;
+    }
+
+    #result {
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+
+    .video {
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background-color: #fff;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>YouTube Video Search</h1>
+  <div class="Video">
+    <input type="text" id="searchInput" placeholder="Search YouTube...">
+    <button onclick="searchYouTube()">Search</button>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    async function searchYouTube() {
+      const query = document.getElementById("searchInput").value.trim();
+      const apiKey = "AIzaSyA0wdQBhqFQ7pl8enLjosO5yKIaSD1Q6lI";
+      const maxResults = 10;
+
+      if (!query) {
+        alert("plese Enter the search");
+        return;
+      }
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&maxResults=${maxResults}&key=${apiKey}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const resultsDiv = document.getElementById("results");
+        results.innerHTML = "";
+
+        data.items.forEach(item => {
+          const videoId = item.id.videoId;
+          const title = item.snippet.title;
+          const thumbnail = item.snippet.thumbnails.medium.url;
+          const channel = item.snippet.channel;
+
+          const videoElement = document.createElement("div");
+          videoElement.classList.add("video");
+          videoElement.innerHTML = `
+        <a href="https://www.youtube.com/watch?=${videoId}" target="_blank">
+          <img src="${thumbnail}" alt"${title}"
+        </a>
+        <div class="video-title">${title}</div>
+        <div class="channel">by ${channel}</div>
+        `;
+
+          results.appendChild(videoElement);
+
+
+        });
+      } catch (error) {
+        alert("Failed to fetch videos.check your API key or network.");
+        console.error(error);
+      }
+
+    }
+  </script>
+</body>
